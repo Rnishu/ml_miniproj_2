@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .card {
+            width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input, select {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .prediction-box {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2 style="text-align: center;">Enter Customer Information</h2>
+        <form id="customer-form">
+            <label for="credit_score">Credit Score:</label>
+            <input type="number" id="credit_score" name="credit_score" required><br>
+            
+            <label for="country">Country:</label>
+            <select id="country" name="country">
+                <option value="france">France</option>
+                <option value="spain">Spain</option>
+                <option value="germany">Germany</option>
+            </select><br>
+            
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select><br>
+            
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required><br>
+            
+            <label for="tenure">Tenure:</label>
+            <input type="number" id="tenure" name="tenure" required><br>
+            
+            <label for="balance">Balance:</label>
+            <input type="number" id="balance" name="balance" required><br>
+            
+            <label for="products_number">Number of Products:</label>
+            <input type="number" id="products_number" name="products_number" required><br>
+            
+            <label for="credit_card">Credit Card:</label>
+            <input type="text" id="credit_card" name="credit_card" required><br>
+            
+            <label for="active_member">Active Member:</label>
+            <input type="text" id="active_member" name="active_member" required><br>
+            
+            <label for="estimated_salary">Estimated Salary:</label>
+            <input type="number" id="estimated_salary" name="estimated_salary" required><br>
+            
+            <input type="submit" value="Submit">
+        </form>
+        <div id="prediction-box" class="prediction-box" style="display: none;"></div>
+    </div>
+
+    <script>
+        document.getElementById("customer-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form submission
+            const form = event.target;
+            const formData = new FormData(form);
+            const json = {};
+            formData.forEach((value, key) => {
+                json[key] = value;
+            });
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        const predictionBox = document.getElementById("prediction-box");
+                        predictionBox.innerHTML = `<h3>Prediction Result:</h3><p>${response.prediction}</p>`;
+                        predictionBox.style.display = "block";
+                    } else {
+                        alert("An error occurred while processing your request.");
+                    }
+                }
+            };
+            xhr.open("POST", "http://localhost:8080/predict");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(JSON.stringify(json));
+        });
+    </script>
+</body>
+</html>
