@@ -29,7 +29,17 @@ def predict():
 
     pred=xgb.predict([list(json_data.values())])
     print(f"This is pred:{pred}")
-    return jsonify({'prediction':int(pred[0])})
+    if pred[0]=='0':
+        if json_data['gender']==0:
+            pred="He shall stay with us :)"
+        if json_data['gender']==1:
+            pred="She shall stay with us :)"
+    else:
+        if json_data['gender']==0:
+            pred="He will leave soon :("
+        if json_data['gender']==1:
+            pred="She will leave soon :("
+    return jsonify({'prediction':pred})
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
